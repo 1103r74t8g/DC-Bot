@@ -1,0 +1,147 @@
+import asyncio
+from http import client
+import imp
+import resource
+from sre_compile import dis
+from time import time
+import discord
+import datetime
+import os
+import googletrans
+from googletrans import Translator
+import random
+from discord.ext import commands, tasks
+from dataclasses import dataclass
+from googleapiclient.discovery import build
+from discord import app_commands
+import requests
+
+
+bot_token = "MTE3MjE1MjUwMjIzMDIwMDM2MQ.GJLznJ.iqFSi8a4tojY0IX_ahIdJWoZDpjKeaJQoz65es"
+channel_ID = 884449477929349132
+
+
+intents = discord.Intents.default()
+intents.message_content = True
+bot = commands.Bot(command_prefix='>', intents=intents)
+
+
+# 開始運作
+
+
+@bot.event
+async def on_ready():
+    channel = bot.get_channel(channel_ID)
+    await channel.send("hello,Im ready")
+    await channel.send(f'{round(bot.latency*1000)} ms')
+
+# 搜尋圖片
+api_key = "AIzaSyD7N_dbGR6txYjPJLG0DNIQq-SUfPM2U4Y"
+
+
+@bot.command()
+async def show(ctx, *, search):
+    ran = random.randint(0, 9)
+    resource = build("customsearch", "v1", developerKey=api_key).cse()
+    result = resource.list(
+        q=f"{search}", cx="721d7929cf9d249a7", searchType="image").execute()
+    url = result["items"][ran]["link"]
+    embed1 = discord.Embed(title=f"Here your image ({search.title()})")
+    embed1.set_image(url=url)
+    await ctx.send(embed=embed1)
+
+# 翻譯
+
+
+@bot.command()
+async def trans(ctx, lang, *, args):
+    a = Translator().translate(args, dest=lang)
+    await ctx.send(a.text)
+
+# 回傳
+
+
+@bot.command()
+async def ping(ctx):
+    await ctx.send(f'{round(bot.latency*1000)} ms')
+
+# 加法
+
+
+@bot.command()
+async def add(ctx, *arr):
+    num = 0
+    for i in arr:
+        num += int(i)
+    await ctx.send(f"result = {num}")
+
+# 加減乘除
+
+
+@bot.command()
+async def calculate(ctx, x, w, y):
+    if w == "+":
+        sum = int(x)+int(y)
+    elif w == "-":
+        sum = int(x)-int(y)
+    elif w == "*":
+        sum = int(x)*int(y)
+    elif w == "/":
+        sum = int(x)/int(y)
+    await ctx.send(f"result = {sum}")
+
+
+# 擲硬幣
+@bot.command()
+async def coin(ctx):
+    await ctx.send('head or tail')
+
+    def check(message):
+        return message.author == ctx.author and message.content.lower() in ['head', 'tail']
+
+    response = await bot.wait_for('message', check=check)
+    choice = response.content.lower()
+
+    ran = random.choice(['head', 'tail'])
+    if choice == ran:
+        guess = 'You won!'
+    else:
+        guess = 'You lost!'
+
+    embed = discord.Embed(
+        title="coin <:1013moneyz:1175347212197310524>", description=f"It's {choice}", color=0xfffc41)
+    if ran == 'tail':
+        embed.set_thumbnail(
+            url="https://cdn1-next.cybassets.com/media/W1siZiIsIjU5OTMvcHJvZHVjdHMvMjYzNDc3NjEv5aSn5Y2B5Y676IOMX1NfOTJkZmE5Nzc1ZDMyOTUxM2IyMTIuanBlZyJdLFsicCIsInRodW1iIiwiNjAweDYwMCJdXQ.jpeg?sha=3b871d8564ae6504")
+    else:
+        embed.set_thumbnail(
+            url="https://www.cbc.gov.tw/public/data/issue/money/IMAGES/10_1.jpg")
+    embed.add_field(
+        name=guess, value=f'the coin is on the {ran} side', inline=False)
+    embed.set_image(
+        url="https://pic1.zhimg.com/v2-4ac4b8fa74966a153087a4fb00354cd4_b.gif")
+    await ctx.send(embed=embed)
+
+# 無聊亂做的
+
+
+@bot.command()
+async def rickroll(ctx):
+    embed = discord.Embed(
+        title="Never gonna give you up:musical_note:\nNever gonna let you down:musical_note:", color=0x00c7fc)
+    embed.set_image(
+        url='https://media.tenor.com/x8v1oNUOmg4AAAAd/rickroll-roll.gif')
+    await ctx.send(embed=embed)
+
+
+@bot.command()
+async def hotpot(ctx):
+    embed = discord.Embed(
+        title="啊打 一代一代一代", color=0x00c7fc)
+    embed.set_image(
+        url='https://media.tenor.com/61yCyJVoyr8AAAAd/桶神-打工.gif')
+    await ctx.send(embed=embed)
+
+
+bot.run(bot_token)
+
