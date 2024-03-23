@@ -15,6 +15,8 @@ from dataclasses import dataclass
 from googleapiclient.discovery import build
 from discord import app_commands
 import requests
+import keep_alive
+
 
 
 bot_token = "MTE3MjE1MjUwMjIzMDIwMDM2MQ.GJLznJ.iqFSi8a4tojY0IX_ahIdJWoZDpjKeaJQoz65es"
@@ -32,8 +34,20 @@ bot = commands.Bot(command_prefix='>', intents=intents)
 @bot.event
 async def on_ready():
     channel = bot.get_channel(channel_ID)
-    await channel.send("hello,Im ready")
-    await channel.send(f'{round(bot.latency*1000)} ms')
+    await channel.send("I am so horny")
+    # await channel.send(f'{round(bot.latency*1000)} ms')
+
+
+@bot.command()
+async def bobo(ctx):
+    url = ["https://imgur.com/lTM93EQ",
+           "https://imgur.com/xFPZD05", "https://imgur.com/akST4Vx",
+           "https://imgur.com/vNCVD8l", "https://imgur.com/HVYE48w",
+           "https://imgur.com/a/67dk26i", "https://imgur.com/DcvugFZ",
+           "https://imgur.com/af53IZ8", "https://imgur.com/c69M8DG",
+           "https://tenor.com/view/akaonikou-%E8%B5%A4%E9%AC%BC-%E8%B5%A4%E9%AC%BC%E4%BC%AF%E4%BC%AF-%E7%83%82%E7%82%AE%E5%85%B5-%E9%82%B1%E8%90%B1-gif-27458849"]
+    random_image_url = random.choice(url)
+    await ctx.send(random_image_url)
 
 # 搜尋圖片
 api_key = "AIzaSyD7N_dbGR6txYjPJLG0DNIQq-SUfPM2U4Y"
@@ -49,7 +63,39 @@ async def show(ctx, *, search):
     embed1 = discord.Embed(title=f"Here your image ({search.title()})")
     embed1.set_image(url=url)
     await ctx.send(embed=embed1)
+# repeat
 
+
+@bot.command()
+async def say(ctx, sb):
+    await ctx.send(sb)
+
+
+# 語音
+
+
+@bot.command()
+async def join(ctx):
+    if ctx.author.voice:
+        channel = ctx.author.voice.channel
+        voice_client = await channel.connect()
+        await ctx.send(f'Joined {channel}')
+    else:
+        await ctx.send('You are not in a voice channel.')
+
+# 音效
+
+
+@bot.command()
+async def sound(ctx):
+    voice_channel = ctx.author.voice.channel
+    if voice_channel:
+        await ctx.send("playing")
+        voice_client = await voice_channel.connect()
+        audio_source = discord.FFmpegPCMAudio('sound_file.mp3')  # 音效文件的名稱
+        voice_client.play(audio_source)
+    else:
+        await ctx.send("You are not in a voice channel....")
 # 翻譯
 
 
@@ -143,5 +189,7 @@ async def hotpot(ctx):
     await ctx.send(embed=embed)
 
 
-bot.run(bot_token)
 
+if(__name__ == "__main__"):
+  keep_alive.keep_alive()
+  bot.run(bot_token)
