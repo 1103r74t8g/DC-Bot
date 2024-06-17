@@ -19,8 +19,8 @@ import keep_alive
 
 
 
-bot_token = "MTE3MjE1MjUwMjIzMDIwMDM2MQ.GJLznJ.iqFSi8a4tojY0IX_ahIdJWoZDpjKeaJQoz65es"
-channel_ID = 884449477929349132
+bot_token = ""
+channel_ID = 
 
 
 intents = discord.Intents.default()
